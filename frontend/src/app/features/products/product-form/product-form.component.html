@@ -1,0 +1,54 @@
+<section>
+  <h2 class="section-title">เพิ่มสินค้าใหม่</h2>
+
+  <form #productForm="ngForm">
+    <label for="product-name">ชื่อสินค้า</label>
+    <input
+      id="product-name"
+      name="productName"
+      [(ngModel)]="name"
+      required
+      maxlength="200"
+    />
+
+    <label for="product-description">รายละเอียด</label>
+    <textarea
+      id="product-description"
+      name="productDescription"
+      [(ngModel)]="description"
+      maxlength="5000"
+      rows="4"
+    ></textarea>
+
+    <label for="product-price">ราคา (บาท)</label>
+    <input
+      id="product-price"
+      name="productPrice"
+      [(ngModel)]="price"
+      type="text"
+      inputmode="decimal"
+      pattern="[0-9]+([.][0-9]{1,2})?"
+      required
+      placeholder="เช่น 350.00"
+    />
+
+    <label for="product-stock">จำนวนคงเหลือ</label>
+    <input
+      id="product-stock"
+      name="productStock"
+      [(ngModel)]="stock"
+      type="number"
+      min="0"
+      step="1"
+      required
+    />
+
+    <button
+      class="primary"
+      type="button"
+      [disabled]="productForm.invalid"
+    >
+      บันทึกสินค้า — ยังไม่เชื่อม API
+    </button>
+  </form>
+</section>

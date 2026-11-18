@@ -24,9 +24,13 @@ export class Auth {
     }
     return response.status === 204 ? (undefined as T) : response.json();
   }
-  async post(path: string, body?: BodyInit, contentType?: string) {
+  async post<T = unknown>(
+    path: string,
+    body?: BodyInit,
+    contentType?: string,
+  ): Promise<T> {
     const csrf = await this.request<{ token: string }>("/auth/csrf");
-    return this.request(path, {
+    return this.request<T>(path, {
       method: "POST",
       body,
       headers: {

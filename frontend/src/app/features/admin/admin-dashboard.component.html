@@ -21,3 +21,25 @@
     <p>จะพร้อมเมื่อเพิ่มระบบสั่งซื้อ</p>
   </article>
 </div>
+
+<app-product-form />
+
+<h2 class="section-title">รายการสินค้า</h2>
+@if (loading) {
+  <p>กำลังโหลดสินค้า…</p>
+} @else if (!error) {
+  <div class="tiles">
+    @for (product of products; track product.id) {
+      <article>
+        <span>รหัสสินค้า: {{ product.id }}</span>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p>ราคา {{ product.price | number:'1.2-2' }} บาท</p>
+        <p>คงเหลือ {{ product.stock }} ชิ้น</p>
+        <p>{{ product.active ? 'เปิดแสดงในร้าน' : 'ซ่อนจากร้าน' }}</p>
+      </article>
+    } @empty {
+      <p>ยังไม่มีสินค้าในระบบ</p>
+    }
+  </div>
+}

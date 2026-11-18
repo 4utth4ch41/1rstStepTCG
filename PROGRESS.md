@@ -47,3 +47,18 @@ H2 แบบเก็บไฟล์ สร้างแอดมินผ่า�
 - **ตรวจพบตอนบันทึกว่าชื่อไฟล์จริงเป็น ProductService.jav (ขาด a) จึงยังไม่ถือว่า Maven compile service นี้แล้ว ต้องเริ่มครั้งหน้าด้วยเปลี่ยนชื่อเป็น ProductService.java แล้ว compile อีกครั้ง** ผู้ช่วยยังไม่ได้เปลี่ยนไฟล์โค้ดให้ระหว่างพัก
 - ขั้นถัดไปหลังแก้ชื่อ: สอนเพิ่ม method สร้างสินค้า พร้อมตรวจชื่อ ราคา และสต็อก แล้วต่อ Controller/DTO และหน้าแอดมินเพิ่มสินค้า ยังไม่มี API สินค้าและฟอร์มสินค้าที่ใช้งานจริง
 - ผู้ใช้มีการปรับเงื่อนไขรหัสผ่านระหว่างเรียนเป็น 8–20 ตัวอักษรในบางส่วน ให้ตรวจโค้ดจริงก่อนอ้างเงื่อนไข อย่าเปลี่ยนกลับโดยอัตโนมัติ
+
+## จุดพักล่าสุด — บ่าย 18 พฤศจิกายน 2026 (แทนจุดพักก่อนหน้า)
+- ProductService.java แก้ชื่อแล้ว มี createProduct ตรวจชื่อ รายละเอียด ราคา/ทศนิยม/ขอบเขต และสต็อก ใช้ transaction สำหรับเขียน
+- มี CreateProductRequest record และ AdminProductController: GET/POST /api/admin/products ใช้ได้เฉพาะ ADMIN ตาม SecurityConfig
+- ผู้ใช้ทดสอบ POST จาก browser console พร้อม session/CSRF ได้ HTTP 201 และเห็นสินค้า id 1 ใน PostgreSQL แล้ว
+- Angular product.model.ts และ product.service.ts อยู่ frontend/src/app/features/products/ (ย้ายออกจาก backend ที่ผู้ใช้สร้างผิดที่แล้ว)
+- ProductService ฝั่ง Angular มี getAdminProducts() และ createProduct(input)
+- Auth.post<T = unknown> คืน Promise<T> และส่ง generic ต่อให้ request<T> แก้ให้และ build ผ่านแล้ว
+- หน้า admin dashboard โหลดสมาชิกและสินค้าผ่าน Promise.all และแสดงรายการด้วย @for พร้อม DecimalPipe
+- ผู้ใช้สร้าง ProductFormComponent TypeScript/HTML ที่ features/products/product-form แล้ว มี name/description/price/stock, FormsModule และ template-driven form
+- ล่าสุดผู้ใช้ขอให้ช่วยเชื่อม component ก่อนพัก: ผู้ช่วยเพิ่ม import ProductFormComponent กับ imports ของ dashboard, วาง <app-product-form /> ก่อนรายการสินค้า และจัด indentation ของ dashboard แล้ว
+- npm run build ผ่านหลังเชื่อมฟอร์ม ยังไม่ได้ตรวจ UI รอบนี้ผ่าน browser automation
+- **ฟอร์มยังไม่ส่ง POST:** ปุ่มเป็น type="button" มีข้อความ "บันทึกสินค้า — ยังไม่เชื่อม API" จึงยังสร้างสินค้าจากฟอร์มไม่ได้
+- ครั้งถัดไป: พาผู้ใช้เพิ่ม submit handler ใน ProductFormComponent เรียก ProductService.createProduct พร้อม loading/error/success, ตรวจ invalid/null/จำนวนเต็มสต็อก และป้องกันส่งซ้ำ จากนั้น emit สินค้าที่สร้างให้ dashboard เพิ่มรายการ โดยอธิบาย parent-child output ทีละขั้น
+- ยังคงสอนแบบจับมือ ให้ผู้ใช้เขียนเอง เว้นแต่ขอให้ agent แก้ตรง ๆ อย่าเดินหน้าฟีเจอร์อื่นขณะผู้ใช้พัก
