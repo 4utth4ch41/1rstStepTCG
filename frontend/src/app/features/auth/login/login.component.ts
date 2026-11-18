@@ -37,11 +37,11 @@ export class LoginComponent {
     if (
       this.registering &&
       (this.password !== this.confirm ||
-        this.password.length < 12 ||
-        this.password.length > 64 ||
+        this.password.length < 8 ||
+        this.password.length > 20 ||
         new TextEncoder().encode(this.password).length > 72)
     ) {
-      this.error = "รหัสผ่านต้องตรงกัน ยาว 12–64 ตัวอักษร และไม่เกิน 72 ไบต์";
+      this.error = "รหัสผ่านต้องตรงกัน ยาว 8–20 ตัวอักษร และไม่เกิน 72 ไบต์";
       return;
     }
     this.busy = true;

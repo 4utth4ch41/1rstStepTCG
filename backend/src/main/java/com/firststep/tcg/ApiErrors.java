@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ApiErrors {
  @ExceptionHandler(MethodArgumentNotValidException.class)
  ResponseEntity<?> invalid(MethodArgumentNotValidException ex) {
-  return ResponseEntity.badRequest().body(Map.of("message","กรุณาตรวจสอบอีเมล ชื่อ และรหัสผ่าน (12–64 ตัวอักษร)"));
+  return ResponseEntity.badRequest().body(Map.of("message","กรุณาตรวจสอบอีเมล ชื่อ และรหัสผ่าน (8–20 ตัวอักษร)"));
  }
  @ExceptionHandler(ResponseStatusException.class)
  ResponseEntity<?> status(ResponseStatusException ex) {

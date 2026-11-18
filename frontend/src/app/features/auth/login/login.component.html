@@ -93,8 +93,8 @@
             [(ngModel)]="password"
             [type]="visible ? 'text' : 'password'"
             required
-            [attr.minlength]="registering ? 12 : null"
-            [attr.maxlength]="registering ? 64 : null"
+            [attr.minlength]="registering ? 8 : null"
+            [attr.maxlength]="registering ? 20 : null"
             [attr.autocomplete]="
               registering ? 'new-password' : 'current-password'
             "
@@ -109,7 +109,7 @@
         </div>
         @if (registering) {
           <p class="field-hint">
-            ใช้รหัสผ่าน 12–64 ตัวอักษร แนะนำวลีที่ยาวและไม่ซ้ำกับเว็บอื่น
+            ใช้รหัสผ่าน 8–20 ตัวอักษร แนะนำวลีที่ยาวและไม่ซ้ำกับเว็บอื่น
             (ไม่เกิน 72 ไบต์)
           </p>
           <label for="confirm">ยืนยันรหัสผ่าน</label
