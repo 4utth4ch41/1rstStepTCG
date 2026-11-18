@@ -1,6 +1,13 @@
 package com.firststep.tcg.product;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +38,16 @@ public class Product {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @OrderColumn(name = "position")
+    @Column(name = "image_url", nullable = false, length = 200)
+    private List<String> imageUrls = new ArrayList<>();
+
+    public List<String> getImageUrls() { return imageUrls; }
+
+    void addImages(List<String> urls) { imageUrls.addAll(urls); }
 
     protected Product() {
     }

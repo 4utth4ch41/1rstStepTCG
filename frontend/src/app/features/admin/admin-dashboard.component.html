@@ -11,9 +11,9 @@
     <p>จำนวนบัญชีลูกค้าในระบบ</p>
   </article>
   <article>
-    <span> สินค้าและหมวดหมู่ </span>
-    <h2>ขั้นตอนถัดไป</h2>
-    <p>เราจะเพิ่มระบบจัดการสินค้าในบทต่อไป</p>
+    <span>สินค้าในระบบ</span>
+    <h2>{{ loading ? '…' : products.length }}</h2>
+    <p>รายการสินค้าทั้งเปิดแสดงและซ่อนจากร้าน</p>
   </article>
   <article>
     <span> คำสั่งซื้อ </span>
@@ -22,15 +22,17 @@
   </article>
 </div>
 
-<app-product-form />
-
-<h2 class="section-title">รายการสินค้า</h2>
+<div class="product-toolbar">
+  <div><h2 class="section-title">รายการสินค้า</h2><p class="muted">จัดการสินค้าและเตรียมเด็คสำหรับเทิร์นต่อไป</p></div>
+  <app-product-form (created)="onProductCreated($event)" />
+</div>
 @if (loading) {
   <p>กำลังโหลดสินค้า…</p>
 } @else if (!error) {
   <div class="tiles">
     @for (product of products; track product.id) {
       <article>
+        <app-product-gallery [images]="product.imageUrls" [productName]="product.name" />
         <span>รหัสสินค้า: {{ product.id }}</span>
         <h2>{{ product.name }}</h2>
         <p>{{ product.description }}</p>

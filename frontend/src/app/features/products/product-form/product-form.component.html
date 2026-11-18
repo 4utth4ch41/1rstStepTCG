@@ -1,54 +1,56 @@
-<section>
-  <h2 class="section-title">เพิ่มสินค้าใหม่</h2>
+<button class="add-product" type="button" (click)="open()"><span aria-hidden="true">＋</span> เพิ่มสินค้า</button>
+@if (success) { <p class="notice success" role="status">{{ success }}</p> }
 
-  <form #productForm="ngForm">
-    <label for="product-name">ชื่อสินค้า</label>
-    <input
-      id="product-name"
-      name="productName"
-      [(ngModel)]="name"
-      required
-      maxlength="200"
-    />
+<dialog #modal aria-labelledby="product-modal-title" aria-describedby="product-modal-description"
+  (cancel)="onCancel($event)" (click)="onBackdropClick($event)">
+  <header class="modal-header">
+    <div>
+      <span class="eyebrow">PRODUCT MANAGEMENT</span>
+      <h2 id="product-modal-title">เพิ่มสินค้าใหม่</h2>
+      <p id="product-modal-description">กรอกข้อมูลและรูปสินค้าเพื่อเตรียมวางขายในร้าน</p>
+    </div>
+    <button class="close-button" type="button" aria-label="ปิดหน้าต่างเพิ่มสินค้า" [disabled]="saving" (click)="requestClose()">×</button>
+  </header>
+  <form #productForm="ngForm" (ngSubmit)="submit(productForm)">
+    <fieldset [disabled]="saving" [attr.aria-busy]="saving">
+      <div class="modal-content">
+        <label for="product-name">ชื่อสินค้า <span class="required">*</span></label>
+        <input autofocus id="product-name" name="productName" [(ngModel)]="name" required maxlength="200" placeholder="เช่น Vanguard Starter Deck" />
 
-    <label for="product-description">รายละเอียด</label>
-    <textarea
-      id="product-description"
-      name="productDescription"
-      [(ngModel)]="description"
-      maxlength="5000"
-      rows="4"
-    ></textarea>
+        <label for="product-description">รายละเอียดสินค้า</label>
+        <textarea id="product-description" name="productDescription" [(ngModel)]="description" maxlength="5000" rows="3" placeholder="รายละเอียดสินค้าและสิ่งที่ลูกค้าควรทราบ"></textarea>
 
-    <label for="product-price">ราคา (บาท)</label>
-    <input
-      id="product-price"
-      name="productPrice"
-      [(ngModel)]="price"
-      type="text"
-      inputmode="decimal"
-      pattern="[0-9]+([.][0-9]{1,2})?"
-      required
-      placeholder="เช่น 350.00"
-    />
-
-    <label for="product-stock">จำนวนคงเหลือ</label>
-    <input
-      id="product-stock"
-      name="productStock"
-      [(ngModel)]="stock"
-      type="number"
-      min="0"
-      step="1"
-      required
-    />
-
-    <button
-      class="primary"
-      type="button"
-      [disabled]="productForm.invalid"
-    >
-      บันทึกสินค้า — ยังไม่เชื่อม API
-    </button>
+        <div class="image-heading"><label for="product-images">รูปสินค้า <span class="optional">ไม่บังคับ</span></label><span>{{ images.length }}/5 รูป</span></div>
+        <input #imageInput id="product-images" class="visually-hidden" type="file" accept="image/jpeg,image/png" multiple (change)="selectImages($event)" aria-describedby="image-help" />
+        <button class="image-picker" type="button" (click)="imageInput.click()" [disabled]="images.length >= 5">
+          <span class="upload-symbol" aria-hidden="true">＋</span><strong>เลือกรูปสินค้า</strong><span>เลือกได้หลายรูป หรือเลือกเพิ่มภายหลัง</span>
+        </button>
+        <p id="image-help" class="help">JPEG หรือ PNG รูปละไม่เกิน 5 MB · สูงสุด 5 รูป · รูปแรกใช้เป็นรูปปก</p>
+        @if (imageError) { <p class="notice error" role="alert">{{ imageError }}</p> }
+        @if (images.length) {
+          <div class="image-previews">
+            @for (image of images; track image.preview; let index = $index) {
+              <div class="preview-card">
+                <img [src]="image.preview" [alt]="'พรีวิวรูปสินค้า ' + (index + 1)" />
+                @if (index === 0) { <span class="cover-label">รูปปก</span> }
+                <button type="button" class="remove-image" [attr.aria-label]="'ลบรูปที่ ' + (index + 1)" (click)="removeImage(index)">×</button>
+                <span class="filename" [title]="image.file.name">{{ image.file.name }}</span>
+              </div>
+            }
+          </div>
+        }
+        <div class="number-fields">
+          <div><label for="product-price">ราคา (บาท) <span class="required">*</span></label>
+            <input id="product-price" name="productPrice" [(ngModel)]="price" type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?" required placeholder="0.00" /></div>
+          <div><label for="product-stock">จำนวนคงเหลือ <span class="required">*</span></label>
+            <input id="product-stock" name="productStock" [(ngModel)]="stock" type="number" min="0" max="2147483647" step="1" required /></div>
+        </div>
+        @if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+      </div>
+      <footer class="modal-footer">
+        <button class="cancel-button" type="button" (click)="requestClose()">ยกเลิก</button>
+        <button class="save-button" type="submit" [disabled]="productForm.invalid || saving">{{ saving ? 'กำลังบันทึก…' : 'เพิ่มข้อมูล' }}</button>
+      </footer>
+    </fieldset>
   </form>
-</section>
+</dialog>

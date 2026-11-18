@@ -102,3 +102,44 @@ frontend/src/
 
 แต่ละหน้ามี `.component.ts` และ `.component.html` แยกกัน โดย styles ยังใช้จาก `styles.css`
 Routes โหลด component เมื่อใช้งาน ส่วน guard ตรวจสิทธิ์ก่อนเปิดหน้าส่วนตัว และ Backend ยังคงตรวจสิทธิ์ API เสมอ
+
+## เพิ่มสินค้าด้วย modal และรูปหลายรูป
+
+หน้า `/admin` มีปุ่ม **เพิ่มสินค้า** เปิด modal กลางจอ พร้อมปุ่มเพิ่มข้อมูล/ยกเลิก/ปิด
+เมื่อมีข้อมูลที่ยังไม่บันทึก จะขอยืนยันก่อนปิดด้วยปุ่ม ยกเลิก, Escape หรือคลิกพื้นหลัง
+ระหว่างบันทึกจะปิดการแก้ไขและการปิด modal เพื่อไม่ให้ส่งคำขอซ้ำ
+
+- เลือกรูประหว่างรายละเอียดกับราคา รองรับ JPEG/PNG ไม่เกิน 5 รูป รูปละ 5 MB และไม่เกิน 20 ล้านพิกเซล
+- มีพรีวิว ลบรูปก่อนบันทึก และเลือกเพิ่มได้ รูปแรกเป็นรูปปก ไม่บังคับแนบรูป
+- Backend ตรวจเนื้อไฟล์จริงและเขียนรูปใหม่ด้วยชื่อ UUID
+- ไฟล์อยู่ที่ `backend/data/product-images/` (ถ้าเปิดด้วย script) และ URL/ลำดับอยู่ในตาราง `product_images`
+- สำรองโฟลเดอร์รูปควบคู่กับฐานข้อมูล เพราะข้อมูลรูปจริงไม่ได้อยู่ใน PostgreSQL
+- `GET /api/products` แสดงเฉพาะสินค้าที่ active ให้ผู้เยี่ยมชม และ `GET /api/product-images/{filename}` ใช้แสดงรูป
+- หน้าแอดมินและหน้าร้านใช้ `ProductGalleryComponent` ร่วมกัน กดรูปย่อเพื่อเปลี่ยนภาพหลักได้
+- `POST /api/admin/products` รับ multipart: JSON part ชื่อ `product` และไฟล์ part ชื่อ `images` ซ้ำหลายครั้ง
+- API JSON เดิมยังใช้ได้สำหรับเพิ่มสินค้าโดยไม่มีรูป; API เพิ่มสินค้ายังต้องใช้ ADMIN session และ CSRF token
+
+หลังอัปเดตโค้ดนี้ ให้ restart Backend เพื่อให้ Hibernate สร้างตาราง `product_images` และเปิด endpoint ใหม่
+ยังไม่ได้เปิดการแก้ไข/ลบรูปของสินค้าที่บันทึกไปแล้ว และยังไม่มีระบบตะกร้าหรือชำระเงิน
+
+### ใช้ PostgreSQL ใน Terminal ใหม่
+
+```bash
+cd ~/Desktop/1srtStepTCG
+export SPRING_PROFILES_ACTIVE=postgres
+```
+
+รันบรรทัดนี้แยก จากนั้นพิมพ์รหัสฐานข้อมูลแล้วกด Enter:
+
+```bash
+read -r -s -p 'Database password: ' DB_PASSWORD; printf '\n'
+```
+
+เมื่อ prompt กลับมา:
+
+```bash
+export DB_PASSWORD
+./scripts/start-backend.sh
+```
+
+เปิด Frontend ในอีก Terminal ด้วย `cd frontend` แล้ว `npm start`

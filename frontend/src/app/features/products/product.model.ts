@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   stock: number;
   active: boolean;
+  imageUrls: string[];
 }
 
 export interface CreateProductInput {

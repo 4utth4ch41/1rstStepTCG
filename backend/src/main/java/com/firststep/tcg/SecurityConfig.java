@@ -21,6 +21,7 @@ public class SecurityConfig {
   csrf.setHeaderName("X-CSRF-TOKEN");
   return http.csrf(c -> c.csrfTokenRepository(csrf))
    .authorizeHttpRequests(a -> a.requestMatchers("/api/auth/csrf", "/api/auth/register", "/api/auth/login").permitAll()
+    .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products", "/api/product-images/**").permitAll()
     .requestMatchers("/api/admin/**").hasRole("ADMIN")
     .requestMatchers("/api/customer/**").hasRole("CUSTOMER").anyRequest().authenticated())
    .formLogin(f -> f.loginProcessingUrl("/api/auth/login").usernameParameter("email")

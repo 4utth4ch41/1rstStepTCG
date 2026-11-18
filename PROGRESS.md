@@ -62,3 +62,23 @@ H2 แบบเก็บไฟล์ สร้างแอดมินผ่า�
 - **ฟอร์มยังไม่ส่ง POST:** ปุ่มเป็น type="button" มีข้อความ "บันทึกสินค้า — ยังไม่เชื่อม API" จึงยังสร้างสินค้าจากฟอร์มไม่ได้
 - ครั้งถัดไป: พาผู้ใช้เพิ่ม submit handler ใน ProductFormComponent เรียก ProductService.createProduct พร้อม loading/error/success, ตรวจ invalid/null/จำนวนเต็มสต็อก และป้องกันส่งซ้ำ จากนั้น emit สินค้าที่สร้างให้ dashboard เพิ่มรายการ โดยอธิบาย parent-child output ทีละขั้น
 - ยังคงสอนแบบจับมือ ให้ผู้ใช้เขียนเอง เว้นแต่ขอให้ agent แก้ตรง ๆ อย่าเดินหน้าฟีเจอร์อื่นขณะผู้ใช้พัก
+
+
+## จุดล่าสุด — modal และอัปโหลดรูปหลายรูป 18 พฤศจิกายน 2026
+- ผู้ใช้ขอให้ลงมือเปลี่ยนฟอร์มเป็น modal กลางจอ ปุ่มเพิ่มข้อมูล/ยกเลิก มีปุ่มปิดและเตือนก่อนทิ้งข้อมูล
+- ผู้ใช้ต้องการหลายรูปเพื่อให้ลูกค้ากดดูได้ ไม่จำเป็นต้องชะลอไว้ภายหลัง: ทำรองรับ 5 รูปต่อสินค้าแล้ว
+- ProductFormComponent ใช้ native dialog.showModal(), จัด focus, ป้องกันปิดระหว่าง save, reset/revoke object URLs หลังใช้งาน และรองรับมือถือ
+- ช่องเลือกรูปอยู่ระหว่างรายละเอียดกับราคา มีพรีวิว ลบ/เลือกเพิ่มได้ JPEG/PNG รูปละ 5 MB สูงสุด20MP และรูปแรกเป็นปก
+- ProductService Angular ส่ง FormData (JSON Blob part product + parts images) ผ่าน Auth.post เดิม ไม่กำหนด Content-Type เอง
+- Backend มี ProductImageStorage ตรวจภาพจริง/re-encode ตั้งชื่อ UUID เก็บ ./data/product-images, ProductImageController เสิร์ฟรูปสาธารณะ
+- Product มี imageUrls แบบ ordered element collection ในตาราง product_images รักษาลำดับ และสินค้าที่ไม่มีรูปยังใช้ได้
+- AdminProductController รับทั้ง JSON เดิมและ multipart ใหม่ มี cleanup ไฟล์เมื่อ validate/บันทึกสินค้าไม่สำเร็จ
+- เพิ่ม GET /api/products แบบ public เฉพาะ active และ permission GET รูป แต่การสร้างสินค้ายัง ADMIN + CSRF
+- เพิ่ม ProductGalleryComponent ใช้ร่วมกันใน admin/shop กดรูปย่อเปลี่ยนภาพหลักได้; หน้าร้านดึง API จริงแล้ว
+- ทดสอบ Backend 13 tests ผ่าน (auth 5 + product/images 8) ใช้ H2 test แยก ไม่แตะ PostgreSQL ผู้ใช้
+- Angular production build ผ่าน
+- ทดสอบ Chrome headless บน server ทดสอบพอร์ต 18080/14200 กับ H2 ชั่วคราว: login, modal focus, discard/Escape, reset, fake-image error recovery, 2-image save, immediate list, reload, thumbnails, guest images และขนาดมือถือผ่าน
+- ไฟล์ screenshot ทดสอบอยู่ /tmp/firststep-modal-desktop.png และ /tmp/firststep-modal-mobile.png
+- ต้องให้ผู้ใช้ restart Backend ของตัวเองพร้อม profile postgres และ DB_PASSWORD เพื่อให้สร้างตาราง product_images และใช้ endpoint ใหม่
+- แนะนำใช้รูป official โดยดาวน์โหลดไฟล์ที่มีสิทธิ์ใช้มาอัปโหลด แทน hotlink; ไม่ต้องดาวน์โหลดรูปจาก official ให้โดยไม่มีรายการสินค้าหรือ URL
+- ยังไม่มี edit/delete สินค้าหรือรูปหลังบันทึก, ตะกร้า, checkout/payment

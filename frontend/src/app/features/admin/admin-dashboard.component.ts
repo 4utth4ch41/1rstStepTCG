@@ -3,12 +3,13 @@ import { Auth } from '../../core/auth/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { ProductService } from '../products/product.service';
 import type { Product } from '../products/product.model';
+import { ProductGalleryComponent } from '../products/product-gallery/product-gallery.component';
 import { ProductFormComponent } from '../products/product-form/product-form.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [DecimalPipe, ProductFormComponent],
+  imports: [DecimalPipe, ProductFormComponent, ProductGalleryComponent],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent implements OnInit {
@@ -37,4 +38,9 @@ export class AdminDashboardComponent implements OnInit {
       this.cdr.markForCheck();
     }
   }
+
+  onProductCreated(product: Product) {
+    this.products = [...this.products, product];
+  }
+
 }

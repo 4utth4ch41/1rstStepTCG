@@ -1,0 +1,14 @@
+@if (images().length) {
+  <img class="cover" [src]="images()[selectedIndex()] || images()[0]" [alt]="productName()" loading="lazy" />
+  @if (images().length > 1) {
+    <div class="thumbnails" [attr.aria-label]="'เลือกรูป ' + productName()">
+      @for (image of images(); track image; let index = $index) {
+        <button type="button" [class.selected]="selectedIndex() === index" [attr.aria-pressed]="selectedIndex() === index" [attr.aria-label]="'ดูรูปที่ ' + (index + 1) + ' ของ ' + productName()" (click)="selectedIndex.set(index)">
+          <img [src]="image" alt="" loading="lazy" />
+        </button>
+      }
+    </div>
+  }
+} @else {
+  <div class="placeholder" aria-label="ยังไม่มีรูปสินค้า">◇</div>
+}

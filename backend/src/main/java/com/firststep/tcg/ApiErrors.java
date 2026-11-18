@@ -10,6 +10,10 @@ public class ApiErrors {
  ResponseEntity<?> invalid(MethodArgumentNotValidException ex) {
   return ResponseEntity.badRequest().body(Map.of("message","กรุณาตรวจสอบอีเมล ชื่อ และรหัสผ่าน (8–20 ตัวอักษร)"));
  }
+ @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+ ResponseEntity<?> uploadTooLarge() {
+  return ResponseEntity.status(413).body(Map.of("message", "รูปแต่ละไฟล์ต้องไม่เกิน 5 MB และอัปโหลดได้สูงสุด 5 รูป"));
+ }
  @ExceptionHandler(ResponseStatusException.class)
  ResponseEntity<?> status(ResponseStatusException ex) {
   return ResponseEntity.status(ex.getStatusCode()).body(Map.of("message",ObjectsText.reason(ex)));

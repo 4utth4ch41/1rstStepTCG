@@ -76,4 +76,13 @@ public class ProductService {
 
         return productRepository.save(product);
     }
+    @Transactional
+    public Product createProductWithImages(CreateProductRequest request, List<String> imageUrls) {
+        if (request.stock() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "กรุณาระบุจำนวนสต็อก");
+        }
+        Product product = createProduct(request.name(), request.description(), request.price(), request.stock());
+        product.addImages(imageUrls);
+        return product;
+    }
 }
