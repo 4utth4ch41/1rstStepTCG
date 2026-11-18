@@ -1,0 +1,23 @@
+<span class="eyebrow green">STORE MANAGEMENT</span>
+<h1>ภาพรวมร้านของคุณ</h1>
+<p class="muted">คุณเข้าสู่ระบบในฐานะผู้ดูแลร้าน</p>
+@if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+<div class="tiles">
+  <article>
+    <span> สมาชิกลูกค้า </span>
+    <h2>
+      {{ customers }}
+    </h2>
+    <p>จำนวนบัญชีลูกค้าในระบบ</p>
+  </article>
+  <article>
+    <span> สินค้าและหมวดหมู่ </span>
+    <h2>ขั้นตอนถัดไป</h2>
+    <p>เราจะเพิ่มระบบจัดการสินค้าในบทต่อไป</p>
+  </article>
+  <article>
+    <span> คำสั่งซื้อ </span>
+    <h2>ยังไม่เปิดใช้งาน</h2>
+    <p>จะพร้อมเมื่อเพิ่มระบบสั่งซื้อ</p>
+  </article>
+</div>

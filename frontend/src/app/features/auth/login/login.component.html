@@ -1,0 +1,154 @@
+<div class="auth-layout">
+  <section class="story">
+    <a class="brand" routerLink="/shop">
+      <span class="brand-mark"> 1S </span>
+      1srtStep
+      <span> TCG </span>
+    </a>
+    <div class="story-content">
+      <span class="eyebrow"> YOUR NEXT TURN STARTS HERE </span>
+      <h1>
+        ทุกเด็คมีเรื่องราว
+        <br />
+        เริ่มก้าวแรก
+        <span> ของคุณ </span>
+      </h1>
+      <p>
+        พื้นที่สำหรับคนรักการ์ดไฟท์แวนการ์ด
+        <br />
+        เตรียมเด็คที่ใช่ แล้วไปต่อด้วยกัน
+      </p>
+      <div class="card-scene" aria-hidden="true">
+        <div class="playing-card back">✦</div>
+        <div class="playing-card front">
+          <span>1S · VANGUARD</span>
+          <div class="crystal">✧</div>
+          <strong>FIRST STEP</strong
+          ><small>THE BEGINNING OF YOUR JOURNEY</small>
+        </div>
+        <div class="orbit">✦</div>
+      </div>
+      <div class="story-note">
+        <span class="dot"></span> ONE STORE. A WORLD OF POSSIBILITIES.
+      </div>
+    </div>
+    <footer>1srtStepTCG · สำหรับทุกก้าวของนักสะสม</footer>
+  </section>
+  <section class="form-side">
+    <a routerLink="/shop" class="back-link">← กลับไปหน้าร้าน</a>
+    <div class="form-wrap">
+      <span class="eyebrow green">WELCOME TO THE COMMUNITY</span>
+      <h2>{{ registering ? "เริ่มต้นเป็นสมาชิก" : "ยินดีต้อนรับกลับมา" }}</h2>
+      <p class="muted">
+        {{
+          registering
+            ? "สร้างบัญชีสำหรับการเดินทางครั้งใหม่ของคุณ"
+            : "เข้าสู่ระบบ แล้วไปต่อกับเด็คโปรดของคุณ"
+        }}
+      </p>
+      <div class="tabs">
+        <button
+          type="button"
+          [class.active]="!registering"
+          (click)="switchMode(false)"
+        >
+          เข้าสู่ระบบ</button
+        ><button
+          type="button"
+          [class.active]="registering"
+          (click)="switchMode(true)"
+        >
+          สมัครสมาชิก
+        </button>
+      </div>
+      <form (ngSubmit)="submit()">
+        @if (registering) {
+          <label for="name">ชื่อที่แสดง</label
+          ><input
+            id="name"
+            name="name"
+            [(ngModel)]="name"
+            required
+            maxlength="80"
+            autocomplete="nickname"
+            placeholder="ชื่อที่อยากให้เราเรียก"
+          />
+        }
+        <label for="email">อีเมล</label
+        ><input
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          type="email"
+          required
+          maxlength="254"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+        <label for="password">รหัสผ่าน</label>
+        <div class="password-field">
+          <input
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            [type]="visible ? 'text' : 'password'"
+            required
+            [attr.minlength]="registering ? 12 : null"
+            [attr.maxlength]="registering ? 64 : null"
+            [attr.autocomplete]="
+              registering ? 'new-password' : 'current-password'
+            "
+            placeholder="กรอกรหัสผ่านของคุณ"
+          /><button
+            type="button"
+            (click)="visible = !visible"
+            [attr.aria-label]="visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'"
+          >
+            {{ visible ? "ซ่อน" : "แสดง" }}
+          </button>
+        </div>
+        @if (registering) {
+          <p class="field-hint">
+            ใช้รหัสผ่าน 12–64 ตัวอักษร แนะนำวลีที่ยาวและไม่ซ้ำกับเว็บอื่น
+            (ไม่เกิน 72 ไบต์)
+          </p>
+          <label for="confirm">ยืนยันรหัสผ่าน</label
+          ><input
+            id="confirm"
+            name="confirm"
+            [(ngModel)]="confirm"
+            type="password"
+            required
+            autocomplete="new-password"
+            placeholder="กรอกรหัสผ่านอีกครั้ง"
+          />
+        }
+        @if (error) {
+          <p class="notice error" role="alert">{{ error }}</p>
+        }
+        @if (success) {
+          <p class="notice success" role="status">{{ success }}</p>
+        }
+        <button class="primary" type="submit" [disabled]="busy">
+          {{
+            busy
+              ? "กำลังดำเนินการ…"
+              : registering
+                ? "สร้างบัญชีลูกค้า →"
+                : "เข้าสู่ระบบ →"
+          }}
+        </button>
+      </form>
+      <div class="divider"><span>หรือเริ่มสำรวจด้วยตัวคุณเอง</span></div>
+      <a class="guest-button" routerLink="/shop"
+        >เข้าชมร้านโดยไม่เข้าสู่ระบบ ↗</a
+      >
+      <p class="footnote">
+        ดูสินค้าและเลือกสิ่งที่ชอบได้เลย<br />เข้าสู่ระบบเมื่อคุณพร้อมสั่งซื้อ
+      </p>
+    </div>
+    <div class="secure-note">
+      ◈ รหัสผ่านได้รับการเข้ารหัสแบบแฮชเพื่อจัดเก็บอย่างปลอดภัย
+    </div>
+  </section>
+</div>

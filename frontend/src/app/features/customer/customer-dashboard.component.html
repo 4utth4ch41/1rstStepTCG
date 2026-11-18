@@ -1,0 +1,21 @@
+<span class="eyebrow green">MY ACCOUNT</span>
+<h1>ยินดีต้อนรับ, {{ auth.user()?.displayName }}</h1>
+<p class="muted">คุณเข้าสู่ระบบในฐานะลูกค้า</p>
+@if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+<div class="tiles">
+  <article>
+    <span> บัญชีของคุณ </span>
+    <h2>พร้อมใช้งาน</h2>
+    <p>
+      {{ auth.user()?.email }}
+    </p>
+  </article>
+
+  <article>
+    <span> คำสั่งซื้อของฉัน </span>
+    <h2>ยังไม่เปิดใช้งาน</h2>
+    <p>เริ่มเลือกสินค้าได้เมื่อร้านเพิ่มรายการสินค้า</p>
+  </article>
+</div>
+
+<a class="guest-button narrow" routerLink="/shop">ไปหน้าร้าน →</a>

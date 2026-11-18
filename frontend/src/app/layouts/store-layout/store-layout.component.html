@@ -1,0 +1,21 @@
+<div class="workspace">
+  <header>
+    <a class="brand dark" routerLink="/shop">
+      <span class="brand-mark">1S</span>1srtStep<span>TCG</span>
+    </a>
+    <nav>
+      <a routerLink="/shop">หน้าร้าน</a>
+      @if (auth.user(); as user) {
+        <span>{{ user.displayName }}</span>
+        <button (click)="logout()" [disabled]="busy">ออกจากระบบ</button>
+      } @else {
+        <a routerLink="/login">เข้าสู่ระบบ / สมัครสมาชิก</a>
+      }
+    </nav>
+  </header>
+  <main>
+    @if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+    <router-outlet />
+  </main>
+  <footer>1srtStepTCG · ทุกเด็คเริ่มต้นด้วยก้าวแรก</footer>
+</div>
