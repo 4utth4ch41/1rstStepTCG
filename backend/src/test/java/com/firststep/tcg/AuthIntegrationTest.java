@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.assertj.core.api.Assertions.*;
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:auth-tests;DB_CLOSE_DELAY=-1","spring.jpa.hibernate.ddl-auto=create-drop","ADMIN_EMAIL=admin@example.test","ADMIN_PASSWORD=test-admin-pass-123"})
+@org.springframework.test.context.ActiveProfiles("test")
 @AutoConfigureMockMvc
 class AuthIntegrationTest {
  @Autowired MockMvc mvc;

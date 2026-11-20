@@ -5,26 +5,38 @@
 ## Step 1: ระบบสมาชิกและสิทธิ์
 
 - `/login`: เข้าสู่ระบบ / สมัครบัญชีลูกค้า
-- `/shop`: หน้าร้านสำหรับทุกคน ยังไม่มีระบบสินค้าและตะกร้า
-- `/admin`: แดชบอร์ดแอดมินเบื้องต้น ยังไม่เปิดจัดการสินค้า
+- `/shop`: หน้าร้านสำหรับทุกคน มีรายการสินค้าและรูปหลายรูป ยังไม่มีตะกร้า
+- `/admin`: แดชบอร์ดแอดมิน พร้อม modal เพิ่มสินค้าและรูป
 - `/dashboard`: แดชบอร์ดลูกค้าเบื้องต้น
 - Backend ตรวจสิทธิ์แยกจาก Angular route guard เสมอ
 - Session cookie แบบ HttpOnly, SameSite=Lax, อายุเมื่อไม่ใช้งาน 30 นาที และ CSRF token
 - BCrypt cost 12; รหัสผ่าน 8–20 ตัวอักษร สูงสุด 72 UTF-8 bytes
 - จำกัด login/register รวม 15 ครั้งต่อนาทีต่อ IP ภายใน process (รีเซ็ตเมื่อ restart)
 - สมัครผ่าน API ได้ CUSTOMER เท่านั้น ไม่รับ role จากผู้ใช้
-- บัญชีเก็บใน H2 ที่ `backend/data/` และยังอยู่หลัง restart
+- ค่าเริ่มต้นเชื่อม PostgreSQL ฐานข้อมูล `firststep_tcg`; บัญชีและสินค้ายังอยู่หลัง restart
 
 ## เปิดใช้งานในเครื่อง
 
 ต้องมี Java 21, Maven, Node.js >=22.22.3 ในสาย 22 และ npm
 
+PostgreSQL เป็น profile เริ่มต้น ไม่ต้อง export `SPRING_PROFILES_ACTIVE` ทุกครั้ง
+
+ตั้งรหัสฐานข้อมูลครั้งเดียว: คัดลอก `.env.example` เป็น `.env` แล้วเติม `DB_PASSWORD=` ด้วยรหัสของ `firststep_app` โดยไม่ใส่เครื่องหมายคำพูด ไม่ใช่รหัสแอดมินหน้าเว็บ
+
+```bash
+cp .env.example .env
+```
+
+`.env` ถูก Git ignore และสคริปต์อ่านค่าเป็นข้อความธรรมดาโดยไม่ประมวลผล shell code
+ถ้ามี `DB_PASSWORD` ใน environment อยู่แล้วจะใช้ค่านั้นก่อน; ถ้าไม่มีทั้งสองที่สคริปต์จะถามรหัสใน Terminal โดยไม่แสดงตัวอักษร
+
 Terminal แรก จากโฟลเดอร์โปรเจกต์:
 
 ```bash
-./scripts/start-backend.sh --create-admin
+./scripts/start-backend.sh
 ```
 
+เฉพาะเมื่อต้องการสร้างบัญชีแอดมินใหม่ ใช้ `./scripts/start-backend.sh --create-admin`
 กรอกอีเมลและรหัสผ่านแอดมินของคุณ รหัสผ่านจะไม่แสดงบนจอและไม่ถูกบันทึกใน source code
 สคริปต์สร้างแอดมินเฉพาะเมื่ออีเมลนั้นยังไม่มี หากเป็นแอดมินอยู่แล้วจะคงรหัสผ่านเดิมไว้ หากเป็นลูกค้าจะไม่ยกระดับสิทธิ์ให้
 หลังสร้างครั้งแรก ใช้ `./scripts/start-backend.sh` ได้เลย
@@ -75,7 +87,7 @@ npm run build
 
 ## ขอบเขตปัจจุบัน
 
-เป็นเวอร์ชันพัฒนาในเครื่อง ยังไม่เชื่อมชำระเงิน ไม่ส่งอีเมลยืนยัน ไม่รองรับลืมรหัสผ่าน และยังไม่มีข้อมูลสินค้า
+เป็นเวอร์ชันพัฒนาในเครื่อง ยังไม่เชื่อมชำระเงิน ไม่ส่งอีเมลยืนยัน ไม่รองรับลืมรหัสผ่าน และยังไม่มีระบบคำสั่งซื้อ
 ก่อนเปิดร้านจริงต้องเพิ่มยืนยันอีเมล/กู้รหัสผ่าน ใช้ฐานข้อมูล production และ migration ตั้ง HTTPS พร้อม `COOKIE_SECURE=true` และระบบจำกัดคำขอที่รองรับ proxy/หลาย instance
 การเปลี่ยนอีเมลหรือรหัสผ่านแอดมินใน environment ไม่ได้แก้บัญชีที่สร้างไปแล้ว
 
@@ -122,24 +134,15 @@ Routes โหลด component เมื่อใช้งาน ส่วน gua
 หลังอัปเดตโค้ดนี้ ให้ restart Backend เพื่อให้ Hibernate สร้างตาราง `product_images` และเปิด endpoint ใหม่
 ยังไม่ได้เปิดการแก้ไข/ลบรูปของสินค้าที่บันทึกไปแล้ว และยังไม่มีระบบตะกร้าหรือชำระเงิน
 
-### ใช้ PostgreSQL ใน Terminal ใหม่
+### เปิด Backend ใน Terminal ใหม่
 
 ```bash
 cd ~/Desktop/1srtStepTCG
-export SPRING_PROFILES_ACTIVE=postgres
-```
-
-รันบรรทัดนี้แยก จากนั้นพิมพ์รหัสฐานข้อมูลแล้วกด Enter:
-
-```bash
-read -r -s -p 'Database password: ' DB_PASSWORD; printf '\n'
-```
-
-เมื่อ prompt กลับมา:
-
-```bash
-export DB_PASSWORD
 ./scripts/start-backend.sh
 ```
 
-เปิด Frontend ในอีก Terminal ด้วย `cd frontend` แล้ว `npm start`
+ใช้ PostgreSQL โดยอัตโนมัติ และอ่านรหัสจาก `.env` ตามขั้นตอนด้านบน
+หากเคย export `SPRING_PROFILES_ACTIVE=h2` ไว้ ให้ใช้ `unset SPRING_PROFILES_ACTIVE` เพื่อกลับมาใช้ค่าเริ่มต้น
+หากต้องการใช้ H2 เดิมโดยตั้งใจ ให้รัน `SPRING_PROFILES_ACTIVE=h2 ./scripts/start-backend.sh`
+ชุดทดสอบใช้ profile `test` และ H2 in-memory แยกต่างหาก ไม่ใช้ PostgreSQL จริง
+การรัน Maven/IDE ตรง ๆ ไม่ผ่านสคริปต์จะไม่ได้อ่าน `.env` ให้อัตโนมัติ ต้องตั้ง `DB_PASSWORD` ใน environment ของโปรแกรมเอง

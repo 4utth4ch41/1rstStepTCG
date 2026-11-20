@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "spring.datasource.username=sa", "spring.datasource.password=",
     "spring.jpa.hibernate.ddl-auto=create-drop"
 })
+@org.springframework.test.context.ActiveProfiles("test")
 @AutoConfigureMockMvc
 class ProductImagesIntegrationTest {
     @TempDir static Path directory;

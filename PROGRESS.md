@@ -82,3 +82,15 @@ H2 แบบเก็บไฟล์ สร้างแอดมินผ่า�
 - ต้องให้ผู้ใช้ restart Backend ของตัวเองพร้อม profile postgres และ DB_PASSWORD เพื่อให้สร้างตาราง product_images และใช้ endpoint ใหม่
 - แนะนำใช้รูป official โดยดาวน์โหลดไฟล์ที่มีสิทธิ์ใช้มาอัปโหลด แทน hotlink; ไม่ต้องดาวน์โหลดรูปจาก official ให้โดยไม่มีรายการสินค้าหรือ URL
 - ยังไม่มี edit/delete สินค้าหรือรูปหลังบันทึก, ตะกร้า, checkout/payment
+
+
+## อัปเดต 19 พฤศจิกายน 2026 — PostgreSQL เป็นค่าเริ่มต้น
+- ผู้ใช้ต้องการไม่ต้อง export profile ทุกครั้ง เนื่องจากล็อกอินแอดมินไม่ได้เมื่อเผลอเปิด H2
+- application.properties ใช้ spring.profiles.default=postgres; ย้ายค่า H2 เดิมไป application-h2.properties (H2_PASSWORD แยกจาก DB_PASSWORD)
+- application-postgres.properties ยังใช้ DB_PASSWORD จาก environment ตามเดิม
+- scripts/start-backend.sh อ่านเฉพาะ DB_PASSWORD จาก root .env เป็น literal ไม่ source shell; environment ที่มีค่ามีลำดับก่อน .env; ถ้าไม่มีจะ prompt แบบซ่อน ไม่บันทึกให้อัตโนมัติ
+- สร้าง .env.example แบบรหัสว่างให้ผู้ใช้ copy ไป .env แล้วกรอกรหัสจริงเองครั้งเดียว .env ถูก ignore อยู่แล้ว ไม่ได้ขอหรือเขียนรหัสจริงให้
+- เปิดปกติด้วย ./scripts/start-backend.sh โดยไม่ต้อง export profile อีก
+- แยก tests เป็น @ActiveProfiles("test") และ src/test/resources/application-test.properties กำหนด H2 driver/credentials เพื่อไม่แตะ PostgreSQL
+- ตรวจ bash syntax และทดสอบสคริปต์ด้วย stub: literal parsing ไม่ execute, env priority, prompt, explicit H2 ผ่าน
+- อ่าน README วิธีเริ่มปัจจุบัน หากรัน Maven หรือ IDE ตรง ๆ จะไม่โหลด .env แบบสคริปต์
